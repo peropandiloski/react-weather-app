@@ -1,5 +1,7 @@
 import React from 'react';
 import './form-style.css'
+import Converter from "node-temperature-converter";
+
 
 const Form = props => {
     return (
@@ -27,6 +29,20 @@ const Form = props => {
                         <button className="btn btn-warning">Get Weather</button>
                     </div>
                 </div>
+                <div className="row">
+                    <div className="col-md-3">
+                        <label htmlFor="c">Celsius</label>
+                        <input className="temp-type" type="radio" name="temperature" id="c" value="c" onChange={handleTemperature}></input>
+
+                        <label htmlFor="k">Kelvin</label>
+                        <input className="temp-type" type="radio" name="temperature" id="k" valiue="k" onChange={handleTemperature}></input>
+
+                        <label htmlFor="f">Fahrenheit</label>
+                        <input className="temp-type" type="radio" name="temperature" id="f" value="f" onChange={handleTemperature}></input>
+
+                    </div>
+
+                </div>
             </form>
         </div>
     );
@@ -38,6 +54,14 @@ function error() {
             Plese Enter City and Country...
         </div>
     )
+}
+
+function handleTemperature(event) {
+    if (event.target.value === 'c') {
+        const kelvin = new Converter.Kelvin(25)
+        console.log(kelvin.toCelsius())
+
+    }
 }
 
 export default Form;
