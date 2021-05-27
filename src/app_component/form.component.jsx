@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './form-style.css'
 import Converter from "node-temperature-converter";
+import Weather from "../app_component/weather.component.jsx"
 
 
-const Form = props => {
+const Form = (props) => {
+    console.log(props)
+
+    const [kelvinToCelsius, setkelvinToCelsius] = useState(null);
+
+    function handleTemperature(event) {
+        if (event.target.value === 'c') {
+            const celsius = new Converter.Kelvin(props.temp_celsius)
+            let kelvinToCelsius = Math.floor(celsius.toCelsius())
+            setkelvinToCelsius(kelvinToCelsius)
+        }
+    }
     return (
         <div className="container h-100">
             <form onSubmit={props.loadweather}>
@@ -44,6 +56,7 @@ const Form = props => {
 
                 </div>
             </form>
+
         </div>
     );
 };
@@ -56,12 +69,6 @@ function error() {
     )
 }
 
-function handleTemperature(event) {
-    if (event.target.value === 'c') {
-        const kelvin = new Converter.Kelvin(25)
-        console.log(kelvin.toCelsius())
 
-    }
-}
 
 export default Form;

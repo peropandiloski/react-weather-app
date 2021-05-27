@@ -3,15 +3,13 @@ import "./App.css";
 import Form from "./app_component/form.component";
 import Weather from "./app_component/weather.component";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+// import Converter from "node-temperature-converter";
 
 // git project https://github.com/erikflowers/weather-icons
 import "weather-icons/css/weather-icons.css";
 
-
-
-
-
+// const kelvin = new Converter.Kelvin(308.15)
+// console.log(kelvin.toCelsius())
 class App extends React.Component {
   constructor() {
     super();
@@ -66,10 +64,10 @@ class App extends React.Component {
     }
   }
 
-  tempCelsius(temp) {
-    let cell = Math.floor(temp - 273.15);
-    return cell;
-  }
+  // tempCelsius(temp) {
+  //   let cell = Math.floor(temp - 273.15);
+  //   return cell;
+  // }
 
   getWeather = async e => {
     e.preventDefault();
@@ -85,14 +83,14 @@ class App extends React.Component {
 
 
       const response = await api_call.json();
-
+      console.log(response.main.temp)
       this.setState({
         city: `${response.name}, ${response.sys.country}`,
         country: response.sys.country,
         main: response.weather[0].main,
-        celsius: this.tempCelsius(response.main.temp),
-        temp_max: this.tempCelsius(response.main.temp_max),
-        temp_min: this.tempCelsius(response.main.temp_min),
+        celsius: response.main.temp,
+        temp_max: response.main.temp_max,
+        temp_min: response.main.temp_min,
         description: response.weather[0].description,
         error: false
       });
@@ -115,6 +113,11 @@ class App extends React.Component {
           loadweather={this.getWeather}
           error={this.state.error}
           temp_celsius={this.state.celsius}
+          cityname={this.state.city}
+          weatherIcon={this.state.icon}
+          temp_max={this.state.temp_max}
+          temp_min={this.state.temp_min}
+          description={this.state.description}
         />
         <Weather
           cityname={this.state.city}
