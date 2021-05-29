@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
 import Form from "./app_component/form.component";
-import Weather from "./app_component/weather.component";
 import "bootstrap/dist/css/bootstrap.min.css";
 // import Converter from "node-temperature-converter";
 
@@ -112,21 +111,14 @@ class App extends React.Component {
         <Form
           loadweather={this.getWeather}
           error={this.state.error}
-          temp_celsius={this.state.celsius}
+          temp_kelvin={this.state.celsius}
           cityname={this.state.city}
           weatherIcon={this.state.icon}
           temp_max={this.state.temp_max}
           temp_min={this.state.temp_min}
           description={this.state.description}
         />
-        <Weather
-          cityname={this.state.city}
-          weatherIcon={this.state.icon}
-          temp_celsius={this.state.celsius}
-          temp_max={this.state.temp_max}
-          temp_min={this.state.temp_min}
-          description={this.state.description}
-        />
+
       </div>
     );
   }

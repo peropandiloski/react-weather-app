@@ -25,3 +25,26 @@ form input:focus{
     font-weight: bold;
 }
 
+.hide {
+    display: none;
+}
+
+.inline{
+    display: inline;
+}
+.header{
+    margin-bottom:2.5rem;
+}
+
+.lbl-txt{
+    color: white;
+    font-weight: bold;
+    padding:10px;
+}
+.minMax{
+    margin: 5px;
+    display:grid;
+    grid-template-columns:auto auto ;
+    grid-gap: 15px;
+    
+}

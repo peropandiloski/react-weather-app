@@ -1,33 +1,78 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './form-style.css'
 import Converter from "node-temperature-converter";
-import Weather from "../app_component/weather.component.jsx"
+
 
 
 const Form = (props) => {
-    console.log(props)
 
-    const [kelvinToCelsius, setkelvinToCelsius] = useState(null);
+    const [temperatureValues, setTemperatureValues] = useState({
+        celsius: null,
+        kelvin: null,
+        fahrenheit: null
+    });
 
-    function handleTemperature(event) {
-        if (event.target.value === 'c') {
-            const celsius = new Converter.Kelvin(props.temp_celsius)
-            let kelvinToCelsius = Math.floor(celsius.toCelsius())
-            setkelvinToCelsius(kelvinToCelsius)
+    const [max, setMax] = useState({
+        celsius: null,
+        kelvin: null,
+        fahrenheit: null
+    })
+
+    const [min, setMin] = useState({
+        celsius: null,
+        kelvin: null,
+        fahrenheit: null
+    })
+
+    const [displayTemp, setDisplayTemp] = useState("celsius")
+
+    useEffect(() => {
+        if (!isNaN(props.temp_kelvin)) {
+            const kelvin = new Converter.Kelvin(props.temp_kelvin);
+            setTemperatureValues({
+                ...temperatureValues,
+                celsius: Math.round(kelvin.toCelsius()),
+                kelvin: Math.round(props.temp_kelvin),
+                fahrenheit: Math.round(kelvin.toFahrenheit())
+            })
         }
-    }
+    }, [props.temp_kelvin]);
+
+    useEffect(() => {
+        if (!isNaN(props.temp_max) && props.temp_max !== null) {
+            const kelvin = new Converter.Kelvin(Math.round(props.temp_max));
+            setMax({
+                ...max,
+                celsius: Math.round(kelvin.toCelsius()),
+                kelvin: Math.round(props.temp_max),
+                fahrenheit: Math.round(kelvin.toFahrenheit())
+            })
+        }
+        if (!isNaN(props.temp_min) && props.temp_min !== null) {
+            const kelvin = new Converter.Kelvin(Math.round(props.temp_max));
+            setMin({
+                ...min,
+                celsius: Math.round(kelvin.toCelsius()),
+                kelvin: Math.round(props.temp_min),
+                fahrenheit: Math.round(kelvin.toFahrenheit())
+            })
+        }
+
+    }, [props.temp_max, props.temp_min]);
+
     return (
         <div className="container h-100">
             <form onSubmit={props.loadweather}>
                 <div>{props.error ? error() : ""}</div>
                 <div className="row">
-                    <div className="col-md-3 offset-md-2">
+                    <div className="col-md-3 offset-md-2 header">
                         <input
                             type="text"
                             className="form-control"
                             name="city"
                             autoComplete="off"
-                            placeholder="City" />
+                            placeholder="City"
+                        />
                     </div>
                     <div className="col-md-3">
                         <input
@@ -41,25 +86,81 @@ const Form = (props) => {
                         <button className="btn btn-warning">Get Weather</button>
                     </div>
                 </div>
-                <div className="row">
-                    <div className="col-md-3">
-                        <label htmlFor="c">Celsius</label>
-                        <input className="temp-type" type="radio" name="temperature" id="c" value="c" onChange={handleTemperature}></input>
+                <div className="row ">
+                    <div className="col-md-6">
+                        <label className="lbl-txt" htmlFor="c">Celsius</label>
+                        <input
+                            className="temp-type"
+                            type="radio"
+                            name="temperature"
+                            id="c"
+                            value="c"
+                            checked={displayTemp === "celsius"}
+                            onChange={() => displayTemp !== "celsius" && setDisplayTemp("celsius")}
+                        ></input>
 
-                        <label htmlFor="k">Kelvin</label>
-                        <input className="temp-type" type="radio" name="temperature" id="k" valiue="k" onChange={handleTemperature}></input>
+                        <label className="lbl-txt" htmlFor="k">Kelvin</label>
+                        <input
+                            className="temp-type"
+                            type="radio"
+                            name="temperature"
+                            id="k"
+                            valiue="k"
+                            checked={displayTemp === "kelvin"}
+                            onChange={() => displayTemp !== "kelvin" && setDisplayTemp("kelvin")}
+                        ></input>
 
-                        <label htmlFor="f">Fahrenheit</label>
-                        <input className="temp-type" type="radio" name="temperature" id="f" value="f" onChange={handleTemperature}></input>
+                        <label className="lbl-txt" htmlFor="f">Fahrenheit</label>
+                        <input
+                            className="temp-type"
+                            type="radio"
+                            name="temperature"
+                            id="f" value="f"
+                            checked={displayTemp === "fahrenheit"}
+                            onChange={() => displayTemp !== "fahrenheit" && setDisplayTemp("fahrenheit")}
+                        ></input>
+                    </div>
+                </div>
+            </form>
+            <div className="container text-light">
+                <div className="Card">
+                    <h1 className="text-white py-3">{props.cityname}</h1>
+                    <h5 className="py-4">
+                        <i className={`wi ${props.weatherIcon} display-1`} />
+                    </h5>
+
+                    {/* Get Celsius */}
+                    {temperatureValues.kelvin !== 0 && (
+                        <h1 className="py-2">{temperatureValues[displayTemp]}
+                            <span className={displayTemp === "celsius" && temperatureValues.celsius !== null ? "inline" : "hide"}>&#8451;</span>
+                            <span className={displayTemp === "fahrenheit" && temperatureValues.fahrenheit !== null ? "inline" : "hide"}>&#8457;</span>
+                            <span className={displayTemp === "kelvin" && temperatureValues.kelvin !== null ? "inline" : "hide"}>&#8490;</span>
+                        </h1>
+                    )}
+
+                    {/* show max and min temp */}
+                    <div>
+                        <h3 className="minMax">
+                            <span className={max.celsius !== null ? "inline" : "hide"}>Temp Min: {min.celsius !== null && min[displayTemp]} { }</span>
+                            <span className={min.celsius !== null ? "inline" : "hide"}>Temp Max: {max.celsius !== null && max[displayTemp]}</span>
+                        </h3>
 
                     </div>
 
-                </div>
-            </form>
 
-        </div>
+                    {/* Weather description */}
+                    <h4 className="py-3">
+                        {/*desctiption with first letter uppercaser */}
+                        {props.description.charAt(0).toUpperCase() +
+                            props.description.slice(1)}
+                    </h4>
+                </div>
+            </div>
+        </div >
     );
 };
+
+
 
 function error() {
     return (
@@ -68,6 +169,16 @@ function error() {
         </div>
     )
 }
+// function maxminTemp(min, max) {
+//     if (max && min) {
+//         return (
+//             <h3>
+//                 <span className="px-4"><span className="tempTxt">Temp Min:</span>{min.celsius}&#x2103;</span>
+//                 <span className="px-4"><span className="tempTxt">Temp Max:</span>{max.celsius}&#x2103;</span>
+//             </h3>
+//         );
+//     }
+// }
 
 
 
